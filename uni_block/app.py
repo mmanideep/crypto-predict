@@ -1,4 +1,5 @@
 import hashlib
+from web3 import Web3, HTTPProvider
 
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -8,6 +9,9 @@ app.config.from_object('base_app.config.DevConfig')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+
+
+w3 = Web3(HTTPProvider(app.config["RPC_PROVIDER"]))
 
 from uni_block.controllers import export_api_list
 from uni_block.views import export_views_list

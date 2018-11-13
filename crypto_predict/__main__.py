@@ -2,7 +2,7 @@ import os
 import sys
 
 from flask.cli import shell_command
-from uni_block.app import app
+from crypto_predict.app import app
 
 if __name__ == '__main__':
     os.environ["PYTHONPATH"] = os.getcwd()

@@ -2,7 +2,7 @@ import json
 import os
 from solc import compile_source, compile_files
 
-from uni_block.app import w3
+from crypto_predict.app import w3
 
 import logging
 

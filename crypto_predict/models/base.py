@@ -1,7 +1,7 @@
 from sqlalchemy.exc import SQLAlchemyError
 
-from uni_block.app import db
-from uni_block.models.custom_exception import ValidationError
+from crypto_predict.app import db
+from crypto_predict.models.custom_exception import ValidationError
 
 
 class BaseModel(db.Model):

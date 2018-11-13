@@ -5,7 +5,7 @@ from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__, static_url_path="", static_folder="static")
-app.config.from_object('base_app.config.DevConfig')
+app.config.from_object('crypto_predict.config.DevConfig')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -13,8 +13,8 @@ db = SQLAlchemy(app)
 
 w3 = Web3(HTTPProvider(app.config["RPC_PROVIDER"]))
 
-from uni_block.controllers import export_api_list
-from uni_block.views import export_views_list
+from crypto_predict.controllers import export_api_list
+from crypto_predict.views import export_views_list
 
 end_points = set(export_views_list).union(set(export_api_list))
 

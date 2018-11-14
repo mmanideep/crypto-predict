@@ -2,12 +2,10 @@ import json
 import os
 from solc import compile_source, compile_files
 
-from crypto_predict.app import w3
-
-import logging
+from crypto_predict.app import w3, app
 
 
-logger = logging.getLogger(__name__)
+logger = app.logger
 
 
 class BaseContract(object):
@@ -51,7 +49,7 @@ class BaseContract(object):
 
     @classmethod
     def _compile_solidity_file(cls):
-        logger.info("Compiling solidity code from solidity file of " + cls.__name__)
+        logger.warning("Compiling solidity code from solidity file of " + cls.__name__)
         if not cls._contract_name:
             cls._contract_name = cls.__class__.__name__
         file_path = os.path.join(os.getcwd(), cls._solidity_file)

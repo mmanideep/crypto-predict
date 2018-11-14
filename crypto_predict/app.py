@@ -1,12 +1,17 @@
-import hashlib
+import logging
+from logging.handlers import RotatingFileHandler
 from web3 import Web3, HTTPProvider
 
-from flask import Flask, jsonify
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__, static_url_path="", static_folder="static")
 app.config.from_object('crypto_predict.config.DevConfig')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+handler = RotatingFileHandler('crypto_predict.log', maxBytes=10000, backupCount=1)
+handler.setLevel(logging.INFO)
+app.logger.addHandler(handler)
 
 db = SQLAlchemy(app)
 

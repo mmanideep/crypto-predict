@@ -6,8 +6,7 @@ from crypto_predict.app import app
 
 if __name__ == '__main__':
     os.environ["PYTHONPATH"] = os.getcwd()
-    # Todo modify the module name from 'app' to your custom module name
-    os.environ["FLASK_APP"] = "base_app/app.py"
+    os.environ["FLASK_APP"] = "crypto_predict/app.py"
     try:
         arg = sys.argv.pop(1)
     except IndexError:

@@ -1,11 +1,16 @@
+import configparser
 import os
+from web3 import Web3
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-env = os.environ
+
+config = configparser.ConfigParser()
+config.read('crypto_predict/config.ini')
+env = config["DEFAULT"]
 
 db_user = "crypto_predict"
-db_pass = env.get("DBPASS", "crypto_predict")
-db_host = env.get("DBHOST", "localhost:5432")
+db_pass = env.get("DBPASS")
+db_host = env.get("DBHOST")
 db_name = "crypto_predict"
 
 
@@ -17,10 +22,13 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://%s:%s@%s/%s" % (db_user, db_pass, db_host, db_name)
 
     SECRET_KEY = ""
-    RPC_PROVIDER = env.get("RPC_PROVIDER", "HTTP://127.0.0.1:7545")
+    RPC_PROVIDER = env.get("RPC_PROVIDER")
+    ADMIN_ETH_ACCOUNT = Web3.toChecksumAddress(env.get("ADMIN_ETH_ACCOUNT"))
+    ADMIN_ETH_PASSWORD = env.get("ADMIN_ETH_PASSWORD")
+    INITIAL_BALANCE = env.get("INITIAL_BALANCE")
 
 
 class DevConfig(Config):
-
-    DEVELOPMENT = True
+    DEBUG = True
+    ENV = "development"
     SECRET_KEY = "some-secret-key"

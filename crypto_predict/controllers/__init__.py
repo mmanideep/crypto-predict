@@ -2,7 +2,9 @@ import os
 import sys
 import pkgutil
 
-from flask.views import MethodViewType, MethodView
+from flask.views import MethodViewType
+
+from crypto_predict.controllers.base import UnAuthenticatedBaseAPI, BaseAPI
 
 all_my_base_classes = {}
 
@@ -23,5 +25,6 @@ for (module_loader, name, ispkg) in pkgutil.iter_modules([pkg_dir]):
             continue
         dir_obj = getattr(obj, dir_name)
         all_my_base_classes[dir_name] = dir_obj
-        if type(dir_obj) == MethodViewType and dir_obj != MethodView:
+        if type(dir_obj) == MethodViewType and (
+                BaseAPI in dir_obj.__bases__ or UnAuthenticatedBaseAPI in dir_obj.__bases__):
             export_api_list.append(dir_obj)

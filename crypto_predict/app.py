@@ -1,9 +1,14 @@
+import hashlib
 import logging
 from logging.handlers import RotatingFileHandler
 from web3 import Web3, HTTPProvider
 
 from flask import Flask
+from flask_jwt import JWT
 from flask_sqlalchemy import SQLAlchemy
+
+from werkzeug.security import safe_str_cmp
+
 
 app = Flask(__name__, static_url_path="", static_folder="static")
 app.config.from_object('crypto_predict.config.DevConfig')
@@ -17,6 +22,29 @@ db = SQLAlchemy(app)
 
 
 w3 = Web3(HTTPProvider(app.config["RPC_PROVIDER"]))
+
+
+#########################
+# JWT Handler
+#########################
+
+
+from crypto_predict.models.user import UserModel
+
+
+def authenticate(username, password):
+    user = UserModel.query.filter_by(user_name=username).first()
+    if user and safe_str_cmp(user.password.encode('utf-8'), hashlib.md5(str(password).encode('utf-8')).hexdigest()):
+        return user
+
+
+def identity(payload):
+    user_id = payload['identity']
+    return UserModel.query.filter_by(id=user_id).first()
+
+
+jwt = JWT(app, authenticate, identity)
+
 
 from crypto_predict.controllers import export_api_list
 from crypto_predict.views import export_views_list

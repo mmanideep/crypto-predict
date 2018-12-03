@@ -1,7 +1,13 @@
+import uuid
+
 from sqlalchemy.exc import SQLAlchemyError
 
 from crypto_predict.app import db
 from crypto_predict.models.custom_exception import ValidationError
+
+
+def get_unique_id():
+    return uuid.uuid4().hex
 
 
 class BaseModel(db.Model):
@@ -10,7 +16,7 @@ class BaseModel(db.Model):
     """
     __abstract__ = True
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column("id", db.String(32), primary_key=True, default=get_unique_id)
     created_at = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
     updated_at = db.Column(db.DateTime(timezone=True), server_default=db.func.now(), onupdate=db.func.now())
     is_deleted = db.Column(db.Boolean, default=False)

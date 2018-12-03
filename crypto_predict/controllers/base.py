@@ -64,9 +64,10 @@ def mandatory_fields_check(mandatory_fields):
     :param mandatory_fields:
     :return:
     """
+
     def wrapper(func, *args, **kwargs):
         def executable(*args, **kwargs):
-            if request.method in ["POST", "PUT"]:
+            if request.method in ["POST", "PUT", "PATCH"]:
                 if not set(request.json.keys()) >= set(mandatory_fields):
                     return jsonify({
                         "payload": {},
@@ -119,12 +120,24 @@ def unlock_and_lock_eth_account():
     return wrapper
 
 
+def login_required(func, *args, **kwargs):
+    """
+        Logs time taken by the API call and logs error in case of internal server error
+    """
+
+    def executable(*args, **kwargs):
+        response = func(*args, **kwargs)
+        return response
+    response = jwt_required()(executable)
+    return response
+
+
 class BaseAPI(MethodView):
     """
         Base class for API development
     """
 
-    decorators = (transaction_mgmt, log_execution_time_and_error_handling, jwt_required)
+    decorators = (transaction_mgmt, log_execution_time_and_error_handling, login_required)
 
 
 class UnAuthenticatedBaseAPI(MethodView):

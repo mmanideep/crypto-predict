@@ -1,6 +1,6 @@
 import hashlib
 
-from crypto_predict.app import db
+from crypto_predict.app import db, w3
 from crypto_predict.models.base import BaseModel
 from crypto_predict.models.custom_exception import ValidationError
 
@@ -36,3 +36,7 @@ class UserModel(BaseModel):
             raise ValidationError("Password length cannot be less than 8 characters")
         self.password = hashlib.md5(str(self.password).encode('utf-8')).hexdigest()
         super(UserModel, self).save()
+
+    @property
+    def ether_balance(self):
+        return w3.eth.getBalance(self.blockchain_account_key)

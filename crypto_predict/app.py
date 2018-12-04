@@ -3,11 +3,15 @@ import logging
 from logging.handlers import RotatingFileHandler
 from web3 import Web3, HTTPProvider
 
-from flask import Flask
+from flask import Flask, redirect, Response
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 from flask_jwt import JWT
 from flask_sqlalchemy import SQLAlchemy
+from flask_basicauth import BasicAuth
 
 from werkzeug.security import safe_str_cmp
+from werkzeug.exceptions import HTTPException
 
 
 app = Flask(__name__, static_url_path="", static_folder="static")
@@ -45,6 +49,46 @@ def identity(payload):
 
 jwt = JWT(app, authenticate, identity)
 
+
+################################
+#   Flask-Admin Application
+################################
+
+app.config['BASIC_AUTH_USERNAME'] = 'admin'
+app.config['BASIC_AUTH_PASSWORD'] = 'admin@123'
+
+basic_auth = BasicAuth(app)
+
+
+class BaseModelView(ModelView):
+    def is_accessible(self):
+        if not basic_auth.authenticate():
+            raise AuthException('Not authenticated.')
+        else:
+            return True
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(basic_auth.challenge())
+
+
+class AuthException(HTTPException):
+    def __init__(self, message):
+        super().__init__(message, Response(
+            "You could not be authenticated. Please refresh the page.", 401,
+            {'WWW-Authenticate': 'Basic realm="Login Required"'}
+        ))
+
+
+from crypto_predict.models import export_models
+
+app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
+admin = Admin(app, name='CryptoPredict', template_mode='bootstrap3')
+for model in export_models:
+    basic_auth.required(admin.add_view(BaseModelView(model, db.session)))
+
+#################################
+#   Adding routes
+#################################
 
 from crypto_predict.controllers import export_api_list
 from crypto_predict.views import export_views_list

@@ -103,7 +103,7 @@ def unlock_and_lock_eth_account():
                         eth_password = ""
                 if not eth_password.strip():
                     raise ValidationError("eth_password should be present in either json or in headers as ETH-Password")
-                eth_account_key = current_identity().blockchain_account_key
+                eth_account_key = current_identity.blockchain_account_key
                 w3.personal.unlockAccount(eth_account_key, eth_password)  # pylint: disable= no-member
                 LOGGER.info("Unlocked eth account..")
                 response = func(*args, **kwargs)

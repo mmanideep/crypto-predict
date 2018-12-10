@@ -4,7 +4,6 @@ from solc import compile_source, compile_files
 
 from crypto_predict.app import w3, app
 
-
 logger = app.logger
 
 
@@ -25,6 +24,7 @@ class BaseContract(object):
     def __init__(self, contract_address=None):
         klass = self.__class__
         klass._init_class()
+        self.__contract_instance = None
         self.contract = w3.eth.contract(
             abi=klass._abi_code,
             bytecode=klass._byte_code)
@@ -49,7 +49,7 @@ class BaseContract(object):
 
     @classmethod
     def _compile_solidity_file(cls):
-        logger.warning("Compiling solidity code from solidity file of " + cls.__name__)
+        logger.info("Compiling solidity code from solidity file of " + cls.__name__)
         if not cls._contract_name:
             cls._contract_name = cls.__class__.__name__
         file_path = os.path.join(os.getcwd(), cls._solidity_file)
@@ -69,7 +69,7 @@ class BaseContract(object):
 
     def deploy(self, account_key, gas=3000000):
         tx_hash = self.contract.deploy(transaction={'from': account_key, 'gas': gas})
-        tx_receipt = w3.eth.getTransactionReceipt(tx_hash)
+        tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
         self.__contract_address = tx_receipt['contractAddress']
         self.__contract_instance = w3.eth.contract(address=self.__contract_address, abi=self.__class__._abi_code)
         return tx_receipt

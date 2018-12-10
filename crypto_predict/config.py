@@ -27,6 +27,11 @@ class Config(object):
     ADMIN_ETH_ACCOUNT = Web3.toChecksumAddress(env.get("ADMIN_ETH_ACCOUNT"))
     ADMIN_ETH_PASSWORD = env.get("ADMIN_ETH_PASSWORD")
     INITIAL_BALANCE = env.get("INITIAL_BALANCE")
+    BITCOIN_ADDRESS = env.get("bitcoin_address")
+    BITCOIN_CASH_ADDRESS = env.get("bitcoin_cash_address")
+    ETHEREUM_ADDRESS = env.get("ethereum_address")
+    LITECOIN_ADDRESS = env.get("litecoin_address")
+    RIPPLE_ADDRESS = env.get("ripple_address")
 
 
 class DevConfig(Config):

@@ -7,7 +7,7 @@ from crypto_predict.models.custom_exception import ValidationError
 
 class UserModel(BaseModel):
 
-    __tablename__ = "portal_user"
+    __tablename__ = "user"
 
     user_name = db.Column(db.String(32), unique=True, nullable=False)
     first_name = db.Column(db.String(32), nullable=False)

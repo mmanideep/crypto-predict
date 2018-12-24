@@ -29,14 +29,16 @@ class UserModel(BaseModel):
     def as_dict(self):
         private_keys = ["password"]
         user_data = {c.name: getattr(self, c.name) for c in self.__table__.columns if c.name not in private_keys}
+        user_data.update({"eth_balance": self.ether_balance})
         return user_data
 
-    def save(self):
+    def pre_save(self):
+        self.password = hashlib.md5(str(self.password).encode('utf-8')).hexdigest()
+
+    def validations(self):
         if len(self.password) < 8:
             raise ValidationError("Password length cannot be less than 8 characters")
-        self.password = hashlib.md5(str(self.password).encode('utf-8')).hexdigest()
-        super(UserModel, self).save()
 
     @property
     def ether_balance(self):
-        return w3.eth.getBalance(self.blockchain_account_key)
+        return float(w3.eth.getBalance(self.blockchain_account_key))

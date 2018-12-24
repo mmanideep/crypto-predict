@@ -8,6 +8,6 @@ class CryptoCurrency:
     Bitcoin = 'Bitcoin'
     BitcoinCash = 'BitcoinCash'
     Ethereum = 'Ethereum'
-    Ripple = 'Ripple'
+    Dogecoin = 'Dogecoin'
     Litecoin = 'Litecoin'
 

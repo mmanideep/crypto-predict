@@ -1,16 +1,14 @@
-pragma solidity ^0.4.20;
+pragma solidity ^0.4.25;
 
 contract BaseContract {
 
     address owner;
 
     uint256 bid;
-
     mapping (address => uint) bidders_map;
     address[] all_bidders;
-
-    event LogBid(address sender, uint amount);
-    event LogClaim(address[] receivers, uint amount);
+    mapping (address => uint) winners_prize_map;
+    bool is_open;
 
     modifier onlyOwner {
         if (msg.sender != owner) {
@@ -19,9 +17,10 @@ contract BaseContract {
         _;
     }
 
-    constructor() public {
+    constructor() public payable {
         owner=msg.sender;
         bid = 0 ether;
+        is_open = true;
     }
 
     function getOwner() public view returns (address){
@@ -30,12 +29,14 @@ contract BaseContract {
 
     function add_bid() public payable returns(bool success){
 
+        require(is_open == true, 'Sorry bidding is closed');
         require(bidders_map[msg.sender] != 1, 'You have already placed the bid');
+        require(msg.value == 0.1 ether, "Only 0.1 ether is allowed for placing bid");
 
         bidders_map[msg.sender] = 1;
         all_bidders.push(msg.sender);
 
-        bid += 0.1 ether;
+        bid += msg.value;
 
         return true;
     }
@@ -44,23 +45,23 @@ contract BaseContract {
         return(bid, all_bidders.length);
     }
 
-    function distribute_bid(address[] _winners) public onlyOwner{
+    function add_winners(address[] _winners) public onlyOwner{
+        uint256 prize_per_winner = bid/_winners.length;
 
-        for(uint i = 0; i < _winners.length; i++) {
+        is_open = false;
 
-            require(bidders_map[_winners[i]] > 0);
-
-            _winners[i].transfer(bid/_winners.length);
+        for(uint i=0; i<_winners.length; i++){
+            require(bidders_map[_winners[i]] > 0, "unrecognized bidder address");
+            winners_prize_map[_winners[i]] = prize_per_winner;
         }
 
-        for(i=0; i<all_bidders.length; i++){
-            if(bidders_map[all_bidders[i]] > 0){
-                delete bidders_map[all_bidders[i]];
-            }
-        }
+    }
 
-        emit LogClaim(_winners, bid/_winners.length);
-        bid = 0 ether;
+    function claim_won_bid() public {
+        require(winners_prize_map[msg.sender] > 0, "Invalid request");
+        msg.sender.transfer(winners_prize_map[msg.sender]);
+        bid -= winners_prize_map[msg.sender];
+        delete winners_prize_map[msg.sender];
     }
 
 }
@@ -74,7 +75,7 @@ contract BitCoinCash is BaseContract {
 }
 
 
-contract Ripple is BaseContract {
+contract Dogecoin is BaseContract {
 }
 
 

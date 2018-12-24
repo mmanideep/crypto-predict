@@ -16,9 +16,9 @@ class Ethereum(BaseContract):
     _contract_name = "Ethereum"
 
 
-class Ripple(BaseContract):
+class Dogecoin(BaseContract):
     _solidity_file = "solidity_code.sol"
-    _contract_name = "Ripple"
+    _contract_name = "Dogecoin"
 
 
 class LiteCoin(BaseContract):

@@ -1,3 +1,4 @@
+import datetime
 import uuid
 
 from sqlalchemy.exc import SQLAlchemyError
@@ -10,6 +11,10 @@ def get_unique_id():
     return uuid.uuid4().hex
 
 
+def get_current_utc():
+    return datetime.datetime.utcnow()
+
+
 class BaseModel(db.Model):
     """
         Abstract model containing default fields id, created_at, updated_at
@@ -17,8 +22,8 @@ class BaseModel(db.Model):
     __abstract__ = True
 
     id = db.Column("id", db.String(32), primary_key=True, default=get_unique_id)
-    created_at = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
-    updated_at = db.Column(db.DateTime(timezone=True), server_default=db.func.now(), onupdate=db.func.now())
+    created_at = db.Column(db.DateTime(), default=get_current_utc)
+    updated_at = db.Column(db.DateTime(), default=get_current_utc, onupdate=get_current_utc)
     is_deleted = db.Column(db.Boolean, default=False)
 
     query = db.session.query_property()
@@ -28,6 +33,7 @@ class BaseModel(db.Model):
 
     def save(self):
         session = db.session.begin_nested()
+        self.pre_save()
         try:
             db.session.add(self)
             session.commit()
@@ -46,6 +52,8 @@ class BaseModel(db.Model):
     def update(self, **kwargs):
         for attr, value in kwargs.items():
             setattr(self, attr, value)
+        # TODO enable this
+        #self.validations()
         session = db.session.begin_nested()
         try:
             db.session.add(self)
@@ -53,3 +61,9 @@ class BaseModel(db.Model):
         except SQLAlchemyError as e:
             session.rollback()
             raise ValidationError(str(e))
+
+    def validations(self):
+        pass
+
+    def pre_save(self):
+        pass

@@ -27,7 +27,7 @@ class RegisterAPI(UnAuthenticatedBaseAPI):
                 {
                     'to': account_address,
                     'from': app.config.get('ADMIN_ETH_ACCOUNT'),
-                    'value': app.config['INITIAL_BALANCE']
+                    'value': w3.toWei(app.config['INITIAL_BALANCE'], "ether")
                 }
             )
 

@@ -1,6 +1,7 @@
 """
     Base class to be used for creating commands
 """
+from crypto_predict.app import db
 
 
 class BaseCommand(object):
@@ -21,3 +22,4 @@ class BaseCommand(object):
             else:
                 arguments.append(arg)
         self.command(*arguments, **kwargs)
+        db.session.commit()

@@ -24,14 +24,18 @@ class Config(object):
     JWT_EXPIRATION_DELTA = timedelta(seconds=604800)
     SECRET_KEY = ""
     RPC_PROVIDER = env.get("RPC_PROVIDER")
+
     ADMIN_ETH_ACCOUNT = Web3.toChecksumAddress(env.get("ADMIN_ETH_ACCOUNT"))
     ADMIN_ETH_PASSWORD = env.get("ADMIN_ETH_PASSWORD")
     INITIAL_BALANCE = env.get("INITIAL_BALANCE")
+
+    CRYPTO_API_KEY = os.environ.get("CRYPTO_API_KEY")
+
     BITCOIN_ADDRESS = env.get("bitcoin_address")
     BITCOIN_CASH_ADDRESS = env.get("bitcoin_cash_address")
     ETHEREUM_ADDRESS = env.get("ethereum_address")
     LITECOIN_ADDRESS = env.get("litecoin_address")
-    RIPPLE_ADDRESS = env.get("ripple_address")
+    DOGECOIN_ADDRESS = env.get("dogecoin_address")
 
 
 class DevConfig(Config):

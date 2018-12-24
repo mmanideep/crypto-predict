@@ -107,3 +107,12 @@ for api in end_points:
         "/{}".format(api_url),
         view_func=view
     )
+
+#################################
+# Periodic Tasks
+#################################
+
+from crypto_predict.periodic_tasks import periodic_tasks
+
+for task in periodic_tasks:
+    task().schedule()

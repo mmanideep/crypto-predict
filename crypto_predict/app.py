@@ -6,6 +6,7 @@ from web3 import Web3, HTTPProvider
 from flask import Flask, redirect, Response
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
+from flask_cors import CORS
 from flask_jwt import JWT
 from flask_sqlalchemy import SQLAlchemy
 from flask_basicauth import BasicAuth
@@ -15,6 +16,7 @@ from werkzeug.exceptions import HTTPException
 
 
 app = Flask(__name__, static_url_path="", static_folder="static")
+CORS(app)
 app.config.from_object('crypto_predict.config.DevConfig')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
